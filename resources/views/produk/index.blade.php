@@ -10,8 +10,13 @@
 <table>
     <thead>
         <tr>
-            <th>No</th><th>Nama Produk</th><th>Kode</th>
-            <th>Kategori</th><th>Harga</th><th>Stok</th>
+            <th>No</th>
+            <th>Foto</th>
+            <th>Nama Produk</th>
+            <th>Kode</th>
+            <th>Kategori</th>
+            <th>Harga</th>
+            <th>Stok</th>
             @if(Auth::user()->isAdmin())<th>Aksi</th>@endif
         </tr>
     </thead>
@@ -19,6 +24,15 @@
         @foreach($produk as $p)
         <tr>
             <td>{{ $loop->iteration }}</td>
+            <td>
+                @if($p->foto)
+                    <img src="{{ asset('storage/'.$p->foto) }}"
+                         width="60" height="60"
+                         style="object-fit:cover;border-radius:5px;border:1px solid #ddd">
+                @else
+                    <span style="color:#aaa;font-size:12px">Tidak ada foto</span>
+                @endif
+            </td>
             <td>{{ $p->nama_produk }}</td>
             <td>{{ $p->kode_produk }}</td>
             <td>{{ $p->kategori->nama_kategori }}</td>

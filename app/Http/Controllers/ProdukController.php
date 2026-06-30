@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Produk;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProdukController extends Controller
 {
@@ -28,8 +29,23 @@ class ProdukController extends Controller
             'kode_produk' => 'required|string|max:20|unique:produk,kode_produk',
             'harga'       => 'required|numeric|min:0',
             'stok'        => 'required|integer|min:0',
+            'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-        Produk::create($request->all());
+
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('produk', 'public');
+        }
+
+        Produk::create([
+            'kategori_id' => $request->kategori_id,
+            'nama_produk' => $request->nama_produk,
+            'kode_produk' => $request->kode_produk,
+            'harga'       => $request->harga,
+            'stok'        => $request->stok,
+            'foto'        => $fotoPath,
+        ]);
+
         return redirect()->route('produk.index')
                          ->with('success', 'Produk berhasil ditambahkan!');
     }
@@ -49,15 +65,42 @@ class ProdukController extends Controller
             'kode_produk' => 'required|string|max:20|unique:produk,kode_produk,'.$id,
             'harga'       => 'required|numeric|min:0',
             'stok'        => 'required|integer|min:0',
+            'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-        Produk::findOrFail($id)->update($request->all());
+
+        $produk = Produk::findOrFail($id);
+
+        $fotoPath = $produk->foto;
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama
+            if ($produk->foto) {
+                Storage::disk('public')->delete($produk->foto);
+            }
+            // Simpan foto baru
+            $fotoPath = $request->file('foto')->store('produk', 'public');
+        }
+
+        $produk->update([
+            'kategori_id' => $request->kategori_id,
+            'nama_produk' => $request->nama_produk,
+            'kode_produk' => $request->kode_produk,
+            'harga'       => $request->harga,
+            'stok'        => $request->stok,
+            'foto'        => $fotoPath,
+        ]);
+
         return redirect()->route('produk.index')
                          ->with('success', 'Produk berhasil diupdate!');
     }
 
     public function destroy($id)
     {
-        Produk::findOrFail($id)->delete();
+        $produk = Produk::findOrFail($id);
+        // Hapus foto dari storage
+        if ($produk->foto) {
+            Storage::disk('public')->delete($produk->foto);
+        }
+        $produk->delete();
         return redirect()->route('produk.index')
                          ->with('success', 'Produk berhasil dihapus!');
     }

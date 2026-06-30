@@ -8,14 +8,14 @@ class Produk extends Model
 {
     protected $table    = 'produk';
     protected $fillable = [
-        'kategori_id',   // ← tambahkan ini
+        'kategori_id',
         'nama_produk',
         'kode_produk',
         'harga',
         'stok',
+        'foto',        
     ];
 
-    // ← tambahkan relasi ini
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
