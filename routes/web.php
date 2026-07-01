@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\StatistikController;
 
 // ── Redirect root ke login
 Route::get('/', fn() => redirect()->route('login'));
@@ -15,6 +16,9 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ── PERLU LOGIN (admin & user) ──────────────────────────
 Route::middleware('auth')->group(function () {
+    
+    // Statistik
+    Route::get('/statistik', [StatistikController::class, 'index'])->name('statistik.index');
 
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 

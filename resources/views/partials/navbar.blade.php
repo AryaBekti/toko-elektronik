@@ -22,6 +22,7 @@ nav .btn-out:hover { background:rgba(255,255,255,.22); }
     <div class="links">
         <a href="{{ route('dashboard') }}">Dashboard</a>
         <a href="{{ route('produk.index') }}">Produk</a>
+        <a href="{{ route('statistik.index') }}">Statistik</a>
         @if(Auth::user()->isAdmin())
             <a href="{{ route('kategori.index') }}">Kategori</a>
         @endif
